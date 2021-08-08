@@ -1,4 +1,5 @@
 .vscode
+!.vscode/templates/js.lict
 .idea
 node_modules
 .env

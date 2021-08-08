@@ -1,0 +1,18 @@
+{
+    "env": {
+        "node": true,
+        "browser": false,
+        "es6": true
+    },
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "extends": ["eslint:recommended"],
+    "rules": {
+        "quotes": ["error", "single", {"allowTemplateLiterals": true}],
+        "no-unused-vars": ["warn"],
+        "prefer-const": ["warn"],
+        "comma-dangle": ["error", "always-multiline"]
+    }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "discordbirthdaybot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "discord.js": "^13.0.1",
+    "dotenv": "^10.0.0",
+    "knex": "^0.21.20"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "sqlite3": "^5.0.2"
+  }
+}

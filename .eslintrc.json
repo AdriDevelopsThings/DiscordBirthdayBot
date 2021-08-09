@@ -14,6 +14,7 @@
         "no-unused-vars": ["warn"],
         "prefer-const": ["warn"],
         "comma-dangle": ["error", "always-multiline"],
-        "object-shorthand": ["warn", "always"]
+        "object-shorthand": ["warn", "always"],
+        "semi": ["error", "never"]
     }
 }

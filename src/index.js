@@ -20,7 +20,6 @@ import { client } from './bot.js'
 import { loadAllLangs } from './lang.js'
 
 
-
 if (!process.env.DISCORD_TOKEN) {
     console.error('Please set the \'DISCORD_TOKEN\' environment variable to your discord bot token.')
     process.exit(1)

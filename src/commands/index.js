@@ -21,6 +21,7 @@ import config from '../config.js'
 import { inviteHandler, githubHandler } from './info.js'
 import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler } from './admin.js'
 import { setBirthdayHandler, birthdayHandler, forgetBirthdayHandler } from './birthday_manager.js'
+import { addNotificationUserHandler, removeNotificationUserHandler } from './add_notification_user.js'
 
 export const commands = [
     {
@@ -50,7 +51,7 @@ export const commands = [
         handler: setBirthdayHandler,
         options: [{
             name: 'birthday',
-            description: 'dd-mm',
+            description: 'Syntax: dd-mm (day-month)',
             type: 3,
             required: true,
         }],
@@ -72,7 +73,7 @@ export const commands = [
         handler: forgetBirthdayHandler,
     },
     {
-        name: 'change_timezone',
+        name: 'set_timezone',
         description: 'Change the server timezone. (UTC per default)',
         handler: modifyTimezoneHandler,
         options: [{
@@ -92,6 +93,16 @@ export const commands = [
             type: 3,
             required: true,
         }],
+    },
+    {
+        name: 'enable_notifications',
+        description: 'Enable notifications on this server.',
+        handler: addNotificationUserHandler,
+    },
+    {
+        name: 'disable_notifications',
+        description: 'Disable notifications on this server.',
+        handler: removeNotificationUserHandler,
     },
 ]
 

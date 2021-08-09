@@ -16,26 +16,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Client, Intents } from 'discord.js'
-import { registerCommands, handleCommand } from './commands/index.js'
-import { birthdayCongratulationAlgorythm } from './birthday_congratulation.js'
-
-export const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] })
-
-
-client.once('ready', async () => {
-    console.log('Bot is up and running')
-    if (!client.application.owner) await client.application.fetch()
-    registerCommands()
-    birthdayCongratulationAlgorythm()
-})
-
-
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) {
-        // TODO
+export const genUTCString = offset => {
+    if(offset < 0) {
+        return `UTC${offset}`
+    } else if(offset > 0) {
+        return `UTC+${offset}`
     } else {
-        // TODO ERROR HANDLER
-        handleCommand(interaction)
+        return 'UTC'
     }
-})
+}

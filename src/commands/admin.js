@@ -18,6 +18,7 @@
 
 import knex from '../db.js'
 import { getTranslation, getGuildTranslation, LANGUAGES } from '../lang.js'
+import { genUTCString } from '../date_utils.js'
 
 const modifyServer = async (guildId, values, guildExists=null) => {
     if (guildExists === null) {
@@ -29,22 +30,12 @@ const modifyServer = async (guildId, values, guildExists=null) => {
     if (guildExists) {
         await knex('guilds').where({ guild_id: guildId }).update({ last_modified: Date.now(), ...values })
     } else {
-        await knex('guilds').insert({ created_at: Date.now(), last_modified: Date.now(), timezone: 0, language: 'en', ...values })
-    }
-}
-
-const genUTCString = offset => {
-    if(offset < 0) {
-        return `UTC${offset}`
-    } else if(offset > 0) {
-        return `UTC+${offset}`
-    } else {
-        return 'UTC'
+        await knex('guilds').insert({ created_at: Date.now(), last_modified: Date.now(), guild_id: guildId, timezone: 0, language: 'en', ...values })
     }
 }
 
 export const setNotificationChannelHandler = async (interaction) => {
-    const [t, guildExists] = await getGuildTranslation(interaction.guildId)
+    const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
         await interaction.reply(t('general.insufficient_permissions'))
@@ -64,7 +55,7 @@ export const setNotificationChannelHandler = async (interaction) => {
 }
 
 export const modifyTimezoneHandler = async (interaction) => {
-    const [t, guildExists] = await getGuildTranslation(interaction.guildId)
+    const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
         await interaction.reply(t('general.insufficient_permissions'))
@@ -88,7 +79,6 @@ export const modifyTimezoneHandler = async (interaction) => {
         await interaction.reply(t('timezone_set.wrong_timezone'))
         return
     }
-
     await modifyServer(interaction.guildId, { timezone }, guildExists)
     await interaction.reply(t('timezone_set.success', { timezone: genUTCString(timezone) }))
 }

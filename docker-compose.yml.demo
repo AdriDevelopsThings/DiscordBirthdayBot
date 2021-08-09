@@ -1,0 +1,28 @@
+version: '3'
+services:
+    db:
+        image: mysql
+        restart: on-failure
+        volumes:
+            - db:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 'root'
+            MYSQL_USER: 'birthdaybot'
+            MYSQL_PASSWORD: 'changeme'
+            MYSQL_DATABASE: 'birthdaybot'
+    app:
+        image: ghcr.io/adridevelopsthings/discordbirthdaybot-rewrite:main
+        restart: on-failure
+        depends_on:
+            - db
+        environment:
+            DISCORD_TOKEN: ''
+            ENVIRONMENT: 'production'
+            MYSQL_HOST: 'db'
+            MYSQL_PORT: '3306'
+            MYSQL_USER: 'birthdaybot'
+            MYSQL_PASSWORD: 'changeme'
+            MYSQL_DATABASE: 'birthdaybot'
+
+volumes:
+    db:

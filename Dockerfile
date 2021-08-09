@@ -19,6 +19,7 @@ COPY ./migrations ./migrations
 COPY ./download_locales.js .
 COPY ./knexfile.js .
 COPY ./docker_start.sh .
+RUN chmod a+x docker_start.sh
 
 RUN yarn run download_locales
 

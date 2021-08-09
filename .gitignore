@@ -1,6 +1,3 @@
-.vscode
-!.vscode/templates/js.lict
-!.vscode/settings.json
 .idea
 node_modules
 .env

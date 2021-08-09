@@ -28,16 +28,9 @@ export default {
   production: {
     client: 'mysql',
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password',
-    },
-    pool: {
-      min: 2,
-      max: 10,
-    },
-    migrations: {
-      tableName: 'knex_migrations',
+      database: process.env.MYSQL_DATABASE || 'birthdaybot',
+      user:     process.env.MYSQL_USER || 'birthdaybot',
+      password: process.env.MYSQL_PASSWORD,
     },
   },
 

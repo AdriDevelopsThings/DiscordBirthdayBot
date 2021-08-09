@@ -8,10 +8,12 @@
   "dependencies": {
     "discord.js": "^13.0.1",
     "dotenv": "^10.0.0",
-    "knex": "^0.21.20"
+    "knex": "^0.21.20",
+    "node-fetch": "^2.6.1"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "download_locales": "node download_locales.js"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

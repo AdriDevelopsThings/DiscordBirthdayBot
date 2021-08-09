@@ -83,7 +83,7 @@ export const commands = [
         }],
     },
     {
-        name: 'change_lang',
+        name: 'set_language',
         description: 'Change the server language.',
         handler: modifyLanguageHandler,
         options: [{

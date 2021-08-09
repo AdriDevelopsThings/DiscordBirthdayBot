@@ -13,6 +13,7 @@
         "quotes": ["error", "single", {"allowTemplateLiterals": true}],
         "no-unused-vars": ["warn"],
         "prefer-const": ["warn"],
-        "comma-dangle": ["error", "always-multiline"]
+        "comma-dangle": ["error", "always-multiline"],
+        "object-shorthand": ["warn", "always"]
     }
 }

@@ -17,6 +17,7 @@
  */
 
 import { client } from './bot.js'
+import { loadAllLangs } from './lang.js'
 
 
 
@@ -25,4 +26,5 @@ if (!process.env.DISCORD_TOKEN) {
     process.exit(1)
 }
 
+loadAllLangs()
 client.login(process.env.DISCORD_TOKEN)

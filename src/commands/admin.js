@@ -33,6 +33,16 @@ const modifyServer = async (guildId, values, guildExists=null) => {
     }
 }
 
+const genUTCString = offset => {
+    if(offset < 0) {
+        return `UTC${offset}`
+    } else if(offset > 0) {
+        return `UTC+${offset}`
+    } else {
+        return 'UTC'
+    }
+}
+
 export const setNotificationChannelHandler = async (interaction) => {
     const [t, guildExists] = await getGuildTranslation(interaction.guildId)
 
@@ -44,13 +54,13 @@ export const setNotificationChannelHandler = async (interaction) => {
     const channel = interaction.options.getChannel('channel')
 
     if(!channel.isText()) {
-        await interaction.reply(t('admin.set_notification_channel.error_channel_type'))
+        await interaction.reply(t('set_notification_channel.error_channel_type'))
         return
     }
 
     await modifyServer(interaction.guildId, { notification_channel_id: channel.id }, guildExists)
 
-    await interaction.reply(t('admin.set_notification_channel.success', {channel: `<#${channel.id}>`}))
+    await interaction.reply(t('set_notification_channel.success', {channel: `<#${channel.id}>`}))
 }
 
 export const modifyTimezoneHandler = async (interaction) => {
@@ -64,27 +74,31 @@ export const modifyTimezoneHandler = async (interaction) => {
     let timezoneString = interaction.options.getString('timezone').toLowerCase().replace('gmt', 'utc')
     if (timezoneString == 'utc' || timezoneString == 'utc0') {
         timezoneString = 'utc+0'
+    } else if(!timezoneString.startsWith('utc')) {
+        timezoneString = 'utc' + timezoneString
     }
 
     if (timezoneString.length != 5) {
         await interaction.reply(t('timezone_set.wrong_syntax'))
+        return
     }
 
     const timezone = parseInt(timezoneString.substr(3))
     if (timezone < -12 || timezone > 12) {
-        await interaction.reply(t('timezone_set.wrong_syntax'))
+        await interaction.reply(t('timezone_set.wrong_timezone'))
+        return
     }
 
-    await modifyServer(interaction.guildId, { timezone: timezone }, guildExists)
-    await interaction.reply(t('timezone_set.success'))
+    await modifyServer(interaction.guildId, { timezone }, guildExists)
+    await interaction.reply(t('timezone_set.success', { timezone: genUTCString(timezone) }))
 }
 
 export const modifyLanguageHandler = async (interaction) => {
     const language = interaction.options.getString('language').toLowerCase()
     if (!Object.keys(LANGUAGES).includes(language)) {
-        await interaction.reply((await getGuildTranslation(interaction.guildId))('language_set.doesnt_exist', { language: language, available_languages: Object.keys(LANGUAGES).join(', ') }))
+        await interaction.reply((await getGuildTranslation(interaction.guildId))('language_set.doesnt_exist', { language , available_languages: Object.keys(LANGUAGES).join(', ') }))
     } else {
-        await modifyServer(interaction.guildId, { language: language })
-        await interaction.reply((getTranslation(language))('language_set.success', { language: language }))
+        await modifyServer(interaction.guildId, { language })
+        await interaction.reply((getTranslation(language))('language_set.success', { language }))
     }
 }

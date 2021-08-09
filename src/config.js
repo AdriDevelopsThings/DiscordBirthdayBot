@@ -23,4 +23,8 @@ dotenv.config()
 export default {
     environment: process.env.ENVIRONMENT || 'development',
     development_guild_id: process.env.DEVELOPMENT_GUILD_ID || null,
+    traduora_api_url: process.env.TRADUORA_API_URL || 'https://traduora.adridoesthings.com/api/v1',
+    traduora_api_client_id: process.env.TRADUORA_API_CLIENT_ID,
+    traduora_api_client_secret: process.env.TRADUORA_API_CLIENT_SECRET,
+    traduora_api_project_id: process.env.TRADUORA_API_PROJECT_ID,
 }

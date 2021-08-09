@@ -17,17 +17,34 @@
  */
 
 import en from '../locales/en.js'
+import de from '../locales/de.js'
 
-const LANGUAGES = {en}
+import db from './db.js'
+
+export const LANGUAGES = {en,de}
 
 const DEFAULT_LANGUAGE = 'en'
 
-export function getTranslation(lang=DEFAULT_LANGUAGE) {
+export const getTranslation = (lang=DEFAULT_LANGUAGE) => {
     return function translate(key, options={}) {
-        let string = LANGUAGES[lang][key] || LANGUAGES[DEFAULT_LANGUAGE][key]
+        let string = LANGUAGES[lang][key] || LANGUAGES[DEFAULT_LANGUAGE][key] || key
         for(const [key, values] of Object.entries(options)) {
             string = string.replace(`%${key}%`, values)
         }
         return string
     }
+}
+
+
+export const getGuildTranslation = async (guildId, returnGuildExist=false) => {
+    const langRow = await db('guilds').where({ guild_id: guildId }).select('language').first()
+    const guildExists = !!langRow
+    const lang = guildExists ? langRow.language : DEFAULT_LANGUAGE
+
+    if (returnGuildExist) {
+        return [getTranslation(lang), guildExists]
+    } else {
+        return getTranslation(lang)
+    }
+    
 }

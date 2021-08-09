@@ -27,4 +27,6 @@ export default {
     'admin.set_notification_channel.error_channel_type': 'Error: Channel has to be a text channel',
     'timezone_set.wrong_syntax': 'Wrong syntax.',
     'timezone_set.success': 'Success',
-}
+    'language_set.doesnt_exist': 'The language \'%language%\' doesn\'t exist. Available languages are: %available_languages%',
+    'language_set.success': 'The language \'%language%\' was set.',
+}   

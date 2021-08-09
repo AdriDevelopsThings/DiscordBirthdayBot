@@ -19,7 +19,7 @@
 import { client } from '../bot.js'
 import config from '../config.js'
 import { inviteHandler, githubHandler } from './info.js'
-import { setNotificationChannelHandler, modifyTimezoneHandler } from './admin.js'
+import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler } from './admin.js'
 import { setBirthdayHandler, birthdayHandler, forgetBirthdayHandler } from './birthday_manager.js'
 
 export const commands = [
@@ -73,11 +73,22 @@ export const commands = [
     },
     {
         name: 'change_timezone',
-        description: 'Change your timezone. (UTC per default)',
+        description: 'Change the server timezone. (UTC per default)',
         handler: modifyTimezoneHandler,
         options: [{
             name: 'timezone',
             description: 'UTC+-0 or GMT+-0',
+            type: 3,
+            required: true,
+        }],
+    },
+    {
+        name: 'change_lang',
+        description: 'Change the server language.',
+        handler: modifyLanguageHandler,
+        options: [{
+            name: 'language',
+            description: 'Language code (en/de...)',
             type: 3,
             required: true,
         }],

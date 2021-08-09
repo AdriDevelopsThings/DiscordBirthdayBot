@@ -17,7 +17,7 @@
  */
 
 import db from '../db.js'
-import { getTranslation } from '../lang.js'
+import { getGuildTranslation } from '../lang.js'
 
 class WrongBirthdaySyntaxError extends Error {}
 
@@ -41,7 +41,7 @@ const parseBirthday = (birthday) => {
 }
 
 export const setBirthdayHandler = async (interaction) => {
-    const translate = getTranslation()
+    const translate = await getGuildTranslation(interaction.guildId)
     const user_id = interaction.user.id
     try {
         const {birthday_day, birthday_month} = parseBirthday(interaction.options.getString('birthday'))
@@ -65,7 +65,7 @@ export const setBirthdayHandler = async (interaction) => {
 }
 
 export const birthdayHandler = async (interaction) => {
-    const translate = getTranslation()
+    const translate = await getGuildTranslation(interaction.guildId)
     const targetUserId = interaction.options.getUser('user') || interaction.user.id
     const birthday = await db('users').where({ user_id: targetUserId }).select(['birthday_day', 'birthday_month']).first()
     if (birthday) {
@@ -77,5 +77,5 @@ export const birthdayHandler = async (interaction) => {
 
 export const forgetBirthdayHandler = async (interaction) => {
     await db('users').where({ user_id: interaction.user.id }).del()
-    await interaction.reply(getTranslation()('forget_birthday.success'))
+    await interaction.reply((await getGuildTranslation(interaction.guildId))('forget_birthday.success'))
 }

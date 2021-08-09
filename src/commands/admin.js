@@ -17,10 +17,24 @@
  */
 
 import knex from '../db.js'
-import { getTranslation } from '../lang.js'
+import { getTranslation, getGuildTranslation, LANGUAGES } from '../lang.js'
+
+const modifyServer = async (guildId, values, guildExists=null) => {
+    if (guildExists === null) {
+        guildExists = (await knex('guilds')
+            .select('id')
+            .where({guild_id: guildId}))
+            .length !== 0
+    }
+    if (guildExists) {
+        await knex('guilds').where({ guild_id: guildId }).update({ last_modified: Date.now(), ...values })
+    } else {
+        await knex('guilds').insert({ created_at: Date.now(), last_modified: Date.now(), timezone: 0, language: 'en', ...values })
+    }
+}
 
 export const setNotificationChannelHandler = async (interaction) => {
-    const t = getTranslation()
+    const [t, guildExists] = await getGuildTranslation(interaction.guildId)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
         await interaction.reply(t('general.insufficient_permissions'))
@@ -34,34 +48,13 @@ export const setNotificationChannelHandler = async (interaction) => {
         return
     }
 
-    const guildExists = (await knex('guilds')
-        .select('id')
-        .where({guild_id: interaction.guildId}))
-        .length !== 0
-
-    if(!guildExists) {
-        await knex('guilds')
-            .insert({
-                guild_id: interaction.guildId,
-                last_modified: Date.now(),
-                created_at: Date.now(),
-                notification_channel_id: channel.id,
-                timezone: 0,
-            })
-    } else {
-        await knex('guilds')
-            .where({guild_id: interaction.guildId})
-            .update({
-                last_modified: Date.now(),
-                notification_channel_id: channel.id,
-            })
-    }
+    await modifyServer(interaction.guildId, { notification_channel_id: channel.id }, guildExists)
 
     await interaction.reply(t('admin.set_notification_channel.success', {channel: `<#${channel.id}>`}))
 }
 
 export const modifyTimezoneHandler = async (interaction) => {
-    const t = getTranslation()
+    const [t, guildExists] = await getGuildTranslation(interaction.guildId)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
         await interaction.reply(t('general.insufficient_permissions'))
@@ -81,29 +74,17 @@ export const modifyTimezoneHandler = async (interaction) => {
     if (timezone < -12 || timezone > 12) {
         await interaction.reply(t('timezone_set.wrong_syntax'))
     }
-    
-    const guildExists = (await knex('guilds')
-        .select('id')
-        .where({guild_id: interaction.guildId}))
-        .length !== 0
 
-    if(!guildExists) {
-        await knex('guilds')
-            .insert({
-                guild_id: interaction.guildId,
-                last_modified: Date.now(),
-                created_at: Date.now(),
-                timezone,
-            })
-    } else {
-        await knex('guilds')
-            .where({guild_id: interaction.guildId})
-            .update({
-                last_modified: Date.now(),
-                timezone,
-            })
-    }
-
+    await modifyServer(interaction.guildId, { timezone: timezone }, guildExists)
     await interaction.reply(t('timezone_set.success'))
+}
 
+export const modifyLanguageHandler = async (interaction) => {
+    const language = interaction.options.getString('language').toLowerCase()
+    if (!Object.keys(LANGUAGES).includes(language)) {
+        await interaction.reply((await getGuildTranslation(interaction.guildId))('language_set.doesnt_exist', { language: language, available_languages: Object.keys(LANGUAGES).join(', ') }))
+    } else {
+        await modifyServer(interaction.guildId, { language: language })
+        await interaction.reply((getTranslation(language))('language_set.success', { language: language }))
+    }
 }

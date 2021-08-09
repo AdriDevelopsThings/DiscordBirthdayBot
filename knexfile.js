@@ -26,7 +26,7 @@ export default {
   },
 
   production: {
-    client: 'mysql',
+    client: 'mysql2',
     connection: {
       host:     process.env.MYSQL_HOST || '127.0.0.1',
       port:     process.env.MYSQL_PORT || '3306',

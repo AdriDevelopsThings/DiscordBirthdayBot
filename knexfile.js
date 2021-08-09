@@ -28,6 +28,8 @@ export default {
   production: {
     client: 'mysql',
     connection: {
+      host:     process.env.MYSQL_HOST || '127.0.0.1',
+      port:     process.env.MYSQL_PORT || '3306',
       database: process.env.MYSQL_DATABASE || 'birthdaybot',
       user:     process.env.MYSQL_USER || 'birthdaybot',
       password: process.env.MYSQL_PASSWORD,

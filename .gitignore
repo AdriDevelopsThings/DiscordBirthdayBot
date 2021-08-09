@@ -3,6 +3,7 @@
 .idea
 node_modules
 .env
+locales
 
 *.db
 *.sqlite3

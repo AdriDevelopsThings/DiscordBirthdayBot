@@ -16,8 +16,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import knex from 'knex'
-import knexfile from '../knexfile.js'
-import config from './config.js'
+import { DateTime } from 'luxon'
 
-export default knex(knexfile[config.environment])
+export const generateRandomErrorCode = (length=5, charset='1234567890') => {
+    let errorCode = DateTime.now().toFormat('dd-LL-yyyy.HH:mm:ss-')
+    length += errorCode.length
+    while (errorCode.length != length) {
+        errorCode += charset.charAt(Math.floor(Math.random() * charset.length))
+    }
+    return errorCode
+}

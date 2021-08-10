@@ -19,6 +19,8 @@
 import knex from '../db.js'
 import { getTranslation, getGuildTranslation, LANGUAGES } from '../lang.js'
 import { genUTCString } from '../date_utils.js'
+import db from '../db.js'
+import { fetchNewUsersOnGuild } from '../birthday_congratulation.js'
 
 const modifyServer = async (guildId, values, guildExists=null) => {
     if (guildExists === null) {
@@ -38,7 +40,7 @@ export const setNotificationChannelHandler = async (interaction) => {
     const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
-        await interaction.reply(t('general.insufficient_permissions'))
+        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
         return
     }
 
@@ -54,11 +56,26 @@ export const setNotificationChannelHandler = async (interaction) => {
     await interaction.reply(t('set_notification_channel.success', {channel: `<#${channel.id}>`}))
 }
 
+export const disableServerNotificationsHandler = async (interaction) => {
+    const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
+
+    if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
+        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
+        return
+    }
+
+    if (guildExists) {
+        await db('guilds').where({ guild_id: interaction.guildId }).update({ notification_channel_id: null })
+    }
+
+    await interaction.reply(t('disable_notification_channel.success'))
+}
+
 export const modifyTimezoneHandler = async (interaction) => {
     const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
-        await interaction.reply(t('general.insufficient_permissions'))
+        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
         return
     }
 
@@ -84,6 +101,13 @@ export const modifyTimezoneHandler = async (interaction) => {
 }
 
 export const modifyLanguageHandler = async (interaction) => {
+    const t = await getGuildTranslation(interaction.guildId)
+
+    if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
+        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
+        return
+    }
+
     const language = interaction.options.getString('language').toLowerCase()
     if (!Object.keys(LANGUAGES).includes(language)) {
         await interaction.reply((await getGuildTranslation(interaction.guildId))('language_set.doesnt_exist', { language , available_languages: Object.keys(LANGUAGES).join(', ') }))
@@ -91,4 +115,18 @@ export const modifyLanguageHandler = async (interaction) => {
         await modifyServer(interaction.guildId, { language })
         await interaction.reply((getTranslation(language))('language_set.success', { language }))
     }
+}
+
+export const fixLeavedUsersCongratulations = async (interaction) => {
+    const guildId = interaction.guild.id
+    const t = await getGuildTranslation(guildId)
+
+    if(!interaction.member.permissions.has('ADMINISTRATOR')) {
+        await interaction.reply(t('general.insufficient_permissions', { permissions: 'ADMINISTRATOR' }))
+        return
+    }
+
+    console.log(`Fix leaved user congratulations on ${guildId}`)
+    fetchNewUsersOnGuild()
+    await interaction.reply(t('fix_leaved_user_congratulations.success'))
 }

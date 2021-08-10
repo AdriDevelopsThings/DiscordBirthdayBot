@@ -23,27 +23,33 @@ import { genUTCString } from './date_utils.js'
 import { getTranslation } from './lang.js'
 import { performance } from 'perf_hooks'
 
+export const fetchNewUsersOnGuild = async (guild) => {
+    console.log(`New guild ${guild.id}`)
+    const memberIds = guild.members.fetch().map(member => member.id)
+    const userIds = (await db('users').whereIn('user_id', memberIds).select('user_id'))
+        .map(user => user.id)
+        .filter(async userId => 
+            !(await db('notification_users').where({ user_id: userId, guild_id: guild.id }).select().first()))
+    await db('notification_users').insert(userIds.map(userId => ({ user_id: userId, guild_id: guild.id })))
+} 
 
-const isUserOnGuild = async (guild, userId) => {
-    // TODO: Add how often the function used to stats!
-    const userOnServer = guild.members.cache.has(userId)
-    if(!userOnServer) {
-        await db('notification_users')
-            .where({ guild_id: guild.id, user_id: userId })
-            .del()
+export const onGuildMemberJoin = async (member) => {
+    if (
+        await db('users').where({ user_id: member.id }).select().first() &&
+        !(await db('notification_users').where({ user_id: member.id, guild_id: member.guild.id }.select().first()))) {
+            await db('notification_users').insert({ user_id: member.id, guild_id: member.guild.id })
     }
-    return userOnServer
+}
+
+export const onGuildMemberLeave = async (member) => {
+    await db('notification_users').where({ user_id: member.id, guild_id: member.guild.id }).del()
 }
 
 const hasUserBirthdayNow = async (user, guild, translate) => {
-    console.log('------')
-    console.log(user)
     const now = DateTime.now().setZone(genUTCString(guild.timezone))
-    console.log(now)
-    console.log(guild.timezone)
     if (now.day == user.birthday_day && now.month == user.birthday_month) {
         console.log(`${user.user_id} has birthday!!!`)
-        try {
+        try {   
             await client.channels.cache.get(guild.notification_channel_id).send(translate('birthday.user_has_birthday',{
                 mention: `<@${user.user_id}>`,
                 day: String(now.day).padStart(2, '0'),
@@ -60,6 +66,7 @@ export const birthdayCongratulationAlgorythm = async () => {
     const STARTTIME = performance.now()
     const dayPossibilies = [DateTime.now().minus({ day: 1 }), DateTime.now(), DateTime.now().plus({ day: 1 })].map(m => [m.day, m.month])
     const guilds = await db('guilds')
+        .whereNotNull('notification_channel_id')
         .where('last_birthday_fetch', '<', DateTime.now().startOf('day').toMillis())
         .orWhere({ last_birthday_fetch: null })
         .select(['guild_id', 'notification_channel_id', 'timezone', 'language'])
@@ -67,28 +74,30 @@ export const birthdayCongratulationAlgorythm = async () => {
         console.log(`Guild ${guild.guild_id}`)
         await db('guilds').where({ guild_id:  guild.guild_id }).update({ last_birthday_fetch: DateTime.now().startOf('day').toMillis()})
         const translate = getTranslation(guild.language)
-        const discordGuild = client.guilds.cache.get(String(guild.guild_id))
-        const userIds = (await db('notification_users').where({ guild_id: guild.guild_id }).select('user_id')) 
-        let users = []
+        const userIds = (await db('notification_users').where({ guild_id: guild.guild_id }).select('user_id')).map(user => user.user_id)
+        const users = []
         for (const userId of userIds) {
             const user = await db('users')
                 .where({ user_id: userId })
-                .where({ birthday_day: dayPossibilies[0][0], birthday_month: dayPossibilies[0][1]})
-                .orWhere({ birthday_day: dayPossibilies[1][0], birthday_month: dayPossibilies[1][1]})
-                .orWhere({ birthday_day: dayPossibilies[2][0], birthday_month: dayPossibilies[2][1]})
+                .andWhere((builder) => {
+                    builder.orWhere({ birthday_day: dayPossibilies[0][0], birthday_month: dayPossibilies[0][1]})
+                        .orWhere({ birthday_day: dayPossibilies[1][0], birthday_month: dayPossibilies[1][1]})
+                        .orWhere({ birthday_day: dayPossibilies[2][0], birthday_month: dayPossibilies[2][1]})
+                })
+                .select(['user_id', 'birthday_day', 'birthday_month'])
                 .first()
             if (user) {
                 users.push(user)
             }
         }
-        await discordGuild.members.fetch({ users: users.map(user => user.user_id) })
-        users = users.filter(user => isUserOnGuild(discordGuild, user.user_id))
         users.map(user => hasUserBirthdayNow(user, guild, translate))
     }
     
     const ENDTIME = performance.now()
     console.log('birthdayCongratulationAlgorythm finished; took ' + Math.ceil(ENDTIME - STARTTIME) + 'ms!')
-    setTimeout(birthdayCongratulationAlgorythm, Date.now() % (60 * 60 * 1000))
+    const next_update = 60 * 60 * 1000 - (Date.now() % (60 * 60 * 1000))
+    console.log('next update in: ' + Math.floor(next_update / 1000 / 60) + 'm')
+    setTimeout(birthdayCongratulationAlgorythm, next_update)
 }
 
 

@@ -28,19 +28,26 @@ const modifyNotification = async (userId, guildId, state) => {
     if (state) {
         if (!(await db('notification_users').where({ user_id: userId, guild_id: guildId }).first())) {
             await db('notification_users').insert({ user_id: userId, guild_id: guildId })
+            return {hasBirthdayEntry: Boolean(user), redundant: false}
+        } else {
+            return {hasBirthdayEntry: Boolean(user), redundant: true}
         }
     } else {
         await db('notification_users').where({ user_id: userId, guild_id: guildId }).del()
+        return {hasBirthdayEntry: Boolean(user), redundant: false}
     }
-    return Boolean(user)
 }
 
 export const addNotificationUserHandler = async (interaction) => {
     const t = await getGuildTranslation(interaction.guildId)
     const userId = interaction.user.id
     const guildId = interaction.guild.id
-    const result = await modifyNotification(userId, guildId, true)
-    await interaction.reply(result ? t('add_notification_user.success') : t('add_notification_user.no_birthday'))
+    const {hasBirthdayEntry, redundant} = await modifyNotification(userId, guildId, true)
+    if(redundant) {
+        await interaction.reply(t('add_notification_user.already_enabled'))
+    } else {
+        await interaction.reply(hasBirthdayEntry ? t('add_notification_user.success') : t('add_notification_user.no_birthday'))
+    }
 }
 
 export const removeNotificationUserHandler = async (interaction) => {

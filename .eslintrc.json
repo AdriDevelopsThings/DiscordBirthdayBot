@@ -15,6 +15,7 @@
         "prefer-const": ["warn"],
         "comma-dangle": ["error", "always-multiline"],
         "object-shorthand": ["warn", "always"],
-        "semi": ["error", "never"]
+        "semi": ["error", "never"],
+        "no-constant-condition": ["error", {"checkLoops": false}]
     }
 }

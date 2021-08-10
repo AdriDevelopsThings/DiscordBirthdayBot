@@ -16,11 +16,64 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { getGuildTranslation } from '../lang.js'
+import { MessageActionRow, MessageButton } from 'discord.js'
+import { GITHUB_URL, INVITE_URL } from '../consts.js'
+
 export const inviteHandler = async (interaction) => {
-    // TODO
+    const translate = await getGuildTranslation(interaction.guildId)
+    const row = new MessageActionRow().addComponents(
+        new MessageButton()
+            .setLabel(translate('invite.button_text'))
+            .setStyle('LINK')
+            .setURL(INVITE_URL))
+    await interaction.reply({ content: translate('invite.text'), components: [row] })
 }
 
 export const githubHandler = async (interaction) => {
-    // TODO 
+    const translate = await getGuildTranslation(interaction.guildId)
+    const row = new MessageActionRow().addComponents(
+        new MessageButton()
+            .setLabel(translate('github.button_text'))
+            .setStyle('LINK')
+            .setURL(GITHUB_URL))
+    await interaction.reply({ content: translate('github.text'), components: [row] })
 }
 
+export const gettingStartedHandler = async interaction => {
+    const translate = await getGuildTranslation(interaction.guildId)
+
+    const embeds = [{
+        title: translate('getting_started.title'),
+        description: translate('getting_started.description'),
+        color: 16743579,
+        fields: [
+            {
+                name: translate('getting_started.set_birthday.title'),
+                value: translate('getting_started.set_birthday.text'),
+            },
+            {
+                name: translate('getting_started.birthday.title'),
+                value: translate('getting_started.birthday.text'),
+            },
+            {
+                name: translate('getting_started.birthday_calendar.title'),
+                value: translate('getting_started.birthday_calendar.text'),
+            },
+        ],
+    }]
+
+    if (interaction.member.permissions.has('MANAGE_CHANNELS')) {
+        embeds.push({
+            title: translate('getting_started.admin.title'),
+            description: translate('getting_started.admin.description'),
+            color: 16743579,
+            fields: [{
+                name: translate('getting_started.admin.link_title'),
+                value: INVITE_URL,
+            }],
+        })
+    }
+
+    await interaction.reply({ embeds })
+}

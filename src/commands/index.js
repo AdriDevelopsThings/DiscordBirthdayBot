@@ -18,10 +18,12 @@
 
 import { client } from '../bot.js'
 import config from '../config.js'
-import { inviteHandler, githubHandler } from './info.js'
-import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler } from './admin.js'
+import { inviteHandler, githubHandler, gettingStartedHandler } from './info.js'
+import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler, disableServerNotificationsHandler, fixLeavedUsersCongratulations } from './admin.js'
 import { setBirthdayHandler, birthdayHandler, forgetBirthdayHandler } from './birthday_manager.js'
 import { addNotificationUserHandler, removeNotificationUserHandler } from './add_notification_user.js'
+import { nextBirthdayHandler, currentBirthdayHandler } from './relative_birthday.js'
+import { birthdayCalendarHandler } from './birthday_calendar.js'
 
 export const commands = [
     {
@@ -35,6 +37,11 @@ export const commands = [
         handler: githubHandler,
     },
     {
+        name: 'getting_started',
+        description: 'Get information about important commands',
+        handler: gettingStartedHandler,
+    },
+    {
         name: 'set_notification_channel',
         description: 'Set the notification channel on a guild. (admin)',
         handler: setNotificationChannelHandler,
@@ -44,6 +51,11 @@ export const commands = [
             type: 7,
             required: true,
         }],
+    },
+    {
+        name: 'remove_notification_channel',
+        description: 'Remove the notification channel and disable all notifications on this guild.',
+        handler: disableServerNotificationsHandler,
     },
     {
         name: 'set_birthday',
@@ -104,6 +116,32 @@ export const commands = [
         description: 'Disable notifications on this server.',
         handler: removeNotificationUserHandler,
     },
+    {
+        name: 'fix_leaved_user_congratulations',
+        description: 'If a leaved user get congratulated you have to run this command to fix the issue.',
+        handler: fixLeavedUsersCongratulations,
+    },
+    {
+        name: 'next_birthday',
+        description: 'Show the next date when user has birthday.',
+        handler: nextBirthdayHandler,
+    },
+    {
+        name: 'today_birthday',
+        description: 'Show users which have birthday today.',
+        handler: currentBirthdayHandler,
+    },
+    {
+        name: 'birthday_calendar',
+        description: 'Show birthday calendar',
+        handler: birthdayCalendarHandler,
+        options: [{
+            name: 'month',
+            description: 'Month',
+            type: 3,
+            required: false,
+        }],
+    },
 ]
 
 export const registerCommands = async () => {
@@ -121,7 +159,7 @@ export const registerCommands = async () => {
 export const handleCommand = async (interaction) => {
     for (const command of commands) {
         if (command.name == interaction.commandName) {
-            return command.handler(interaction)
+            return await command.handler(interaction)
         }
     }
 

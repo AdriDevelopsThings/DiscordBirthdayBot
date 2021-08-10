@@ -127,6 +127,6 @@ export const fixLeavedUsersCongratulations = async (interaction) => {
     }
 
     console.log(`Fix leaved user congratulations on ${guildId}`)
-    fetchNewUsersOnGuild()
+    await fetchNewUsersOnGuild(interaction.guild)
     await interaction.reply(t('fix_leaved_user_congratulations.success'))
 }

@@ -25,9 +25,9 @@ import { performance } from 'perf_hooks'
 
 export const fetchNewUsersOnGuild = async (guild) => {
     console.log(`New guild ${guild.id}`)
-    const memberIds = guild.members.fetch().map(member => member.id)
+    const memberIds = (await guild.members.fetch()).map(member => member.id)
     const userIds = (await db('users').whereIn('user_id', memberIds).select('user_id'))
-        .map(user => user.id)
+        .map(user => user.user_id)
         .filter(async userId => 
             !(await db('notification_users').where({ user_id: userId, guild_id: guild.id }).select().first()))
     await db('notification_users').insert(userIds.map(userId => ({ user_id: userId, guild_id: guild.id })))
@@ -36,7 +36,7 @@ export const fetchNewUsersOnGuild = async (guild) => {
 export const onGuildMemberJoin = async (member) => {
     if (
         await db('users').where({ user_id: member.id }).select().first() &&
-        !(await db('notification_users').where({ user_id: member.id, guild_id: member.guild.id }.select().first()))) {
+        !(await db('notification_users').where({ user_id: member.id, guild_id: member.guild.id }).select().first())) {
             await db('notification_users').insert({ user_id: member.id, guild_id: member.guild.id })
     }
 }

@@ -1,0 +1,5 @@
+{
+    "license-header-manager.excludeExtensions": [
+        "sh"
+    ]
+}

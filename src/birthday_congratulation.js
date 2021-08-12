@@ -74,7 +74,7 @@ export const birthdayCongratulationAlgorythm = async () => {
         .select(['guild_id', 'notification_channel_id', 'timezone', 'language'])
     for (const guild of guilds) {
         console.log(`Guild ${guild.guild_id}`)
-        await db('guilds').where({ guild_id:  guild.guild_id }).update({ last_birthday_fetch: DateTime.now().startOf('day').toMillis()})
+        await db('guilds').where({ guild_id:  guild.guild_id }).update({ last_birthday_fetch: dateTimeToSQLFormat(DateTime.now().startOf('day'))})
         const translate = getTranslation(guild.language)
         const userIds = (await db('notification_users').where({ guild_id: guild.guild_id }).select('user_id')).map(user => user.user_id)
         const users = []

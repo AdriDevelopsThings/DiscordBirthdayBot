@@ -48,8 +48,9 @@ export async function up (knex) {
 
     await knex.schema.createTable('stats', table => {
         table.increments('id')
-        table.integer('guild').notNullable()
+        table.integer('guilds').notNullable()
         table.integer('configured_guilds').notNullable()
+        table.integer('guilds_with_notification_enabled').notNullable()
         table.integer('users').notNullable()
 
         table.timestamp('timestamp').defaultTo(knex.fn.now())

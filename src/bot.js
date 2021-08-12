@@ -24,6 +24,7 @@ import { CONTACT_US_METHOD, ISSUE_URL } from './consts.js'
 import { getGuildTranslation, getTranslation } from './lang.js'
 import { generateRandomErrorCode } from './error_handler_utils.js'
 import { onMessageReactionAddBirthdayCalendar } from './commands/birthday_calendar.js'
+import { runFetchStats } from './stats.js'
 
 export const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] })
 
@@ -32,6 +33,7 @@ client.once('ready', async () => {
     console.log('Bot is up and running')
     if (!client.application.owner) await client.application.fetch()
     await registerCommands()
+    runFetchStats()
     birthdayCongratulationAlgorythm()
 })
 

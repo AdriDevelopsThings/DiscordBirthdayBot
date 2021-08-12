@@ -13,6 +13,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "PhilippIRL",
+      "name": "Philipp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18361153?v=4",
+      "profile": "https://gitlab.com/PhilippIRL",
+      "contributions": [
+        "code",
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,

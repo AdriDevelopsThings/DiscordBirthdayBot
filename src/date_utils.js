@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { DateTime } from 'luxon'
+
 export const genUTCString = offset => {
     if(offset < 0) {
         return `UTC${offset}`
@@ -25,3 +27,7 @@ export const genUTCString = offset => {
         return 'UTC'
     }
 }
+
+export const dateTimeToSQLFormat = (datetime) => datetime.toFormat('yyyy-LL-dd HH:mm:ss')
+
+export const currentDateTimeToSQLFormat = () => dateTimeToSQLFormat(DateTime.now())

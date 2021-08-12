@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { currentDateTimeToSQLFormat } from '../date_utils.js'
 import db from '../db.js'
 import { getGuildTranslation } from '../lang.js'
 
@@ -46,9 +47,9 @@ export const setBirthdayHandler = async (interaction) => {
     try {
         const {birthday_day, birthday_month} = parseBirthday(interaction.options.getString('birthday'))
         if (!(await doesUserExist(user_id))) {
-            await db('users').insert({ user_id, birthday_day, birthday_month, created_at: Date.now(), last_modified: Date.now() })
+            await db('users').insert({ user_id, birthday_day, birthday_month, created_at: currentDateTimeToSQLFormat(), last_modified: currentDateTimeToSQLFormat() })
         } else {
-            await db('users').where({ user_id }).update({ birthday_day, birthday_month, last_modified: Date.now() })
+            await db('users').where({ user_id }).update({ birthday_day, birthday_month, last_modified: currentDateTimeToSQLFormat() })
         }
         if ((await db('notification_users').where({ user_id, guild_id: interaction.guildId }).select('id')).length == 0) {
             await db('notification_users').insert({ user_id, guild_id: interaction.guildId })

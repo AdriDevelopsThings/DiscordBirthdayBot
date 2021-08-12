@@ -18,7 +18,7 @@
 
 import knex from '../db.js'
 import { getTranslation, getGuildTranslation, LANGUAGES } from '../lang.js'
-import { genUTCString } from '../date_utils.js'
+import { currentDateTimeToSQLFormat, genUTCString } from '../date_utils.js'
 import db from '../db.js'
 import { fetchNewUsersOnGuild } from '../birthday_congratulation.js'
 
@@ -30,9 +30,9 @@ const modifyServer = async (guildId, values, guildExists=null) => {
             .length !== 0
     }
     if (guildExists) {
-        await knex('guilds').where({ guild_id: guildId }).update({ last_modified: Date.now(), ...values })
+        await knex('guilds').where({ guild_id: guildId }).update({ last_modified: currentDateTimeToSQLFormat(), ...values })
     } else {
-        await knex('guilds').insert({ created_at: Date.now(), last_modified: Date.now(), guild_id: guildId, timezone: 0, language: 'en', ...values })
+        await knex('guilds').insert({ created_at: currentDateTimeToSQLFormat(), last_modified: currentDateTimeToSQLFormat(), guild_id: guildId, timezone: 0, language: 'en', ...values })
     }
 }
 

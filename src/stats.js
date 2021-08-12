@@ -17,6 +17,7 @@
  */
 
 import { client } from './bot.js'
+import { currentDateTimeToSQLFormat } from './date_utils.js'
 import db from './db.js'
 
 export const runFetchStats = async () => {
@@ -30,7 +31,7 @@ export const runFetchStats = async () => {
         configured_guilds: configuredGuildCount,
         guilds_with_notification_enabled: guildsWithNotificationEnabledCount,
         users: usersCount,
-        timestamp: Date.now(),
+        timestamp: currentDateTimeToSQLFormat(),
     })
 
     await client.user.setPresence({

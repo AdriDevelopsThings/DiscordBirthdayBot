@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "AdriDevelopsThings",
+      "name": "AdriDevelopsThings",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45321107?v=4",
+      "profile": "https://adridoesthings.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "DiscordBirthdayBot",
+  "projectOwner": "AdriDevelopsThings",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

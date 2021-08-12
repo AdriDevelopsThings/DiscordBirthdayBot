@@ -25,9 +25,14 @@ import { getGuildTranslation, getTranslation } from './lang.js'
 import { generateRandomErrorCode } from './error_handler_utils.js'
 import { onMessageReactionAddBirthdayCalendar } from './commands/birthday_calendar.js'
 import { runFetchStats } from './stats.js'
+import AutoPoster from 'topgg-autoposter'
+import config from './config.js'
 
 export const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] })
 
+if (config.top_gg_token) {
+    AutoPoster(config.top_gg_token, client) 
+}
 
 client.once('ready', async () => {
     console.log('Bot is up and running')

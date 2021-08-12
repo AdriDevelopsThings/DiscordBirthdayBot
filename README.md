@@ -40,6 +40,7 @@ yarn run start
 * MYSQL_DATABASE=
 * MYSQL_USER=
 * MYSQL_PASSWORD=
+* TOP_GG_TOKEN=Your TOP_GG token if you want to push the server count there.
 
 (If you want to use another database server as mysql look here [Knex documentation](https://knexjs.org/#Installation-client) and implement the configuration in knexfile.js->production and install the yarn package)
 

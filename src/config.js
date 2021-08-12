@@ -27,4 +27,5 @@ export default {
     traduora_api_client_id: process.env.TRADUORA_API_CLIENT_ID,
     traduora_api_client_secret: process.env.TRADUORA_API_CLIENT_SECRET,
     traduora_api_project_id: process.env.TRADUORA_API_PROJECT_ID,
+    top_gg_token: process.env.TOP_GG_TOKEN,
 }

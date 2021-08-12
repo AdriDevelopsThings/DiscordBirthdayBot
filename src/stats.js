@@ -20,16 +20,23 @@ import { client } from './bot.js'
 import db from './db.js'
 
 export const runFetchStats = async () => {
+    const guildsCount = client.guilds.cache.size
     const configuredGuildCount = (await db('guilds').count())[0]['count(*)']
     const guildsWithNotificationEnabledCount = (await db('guilds').whereNotNull('notification_channel_id').count())[0]['count(*)']
     const usersCount = (await db('users').count())[0]['count(*)']
 
     await db('stats').insert({
-        guilds: client.guilds.cache.size,
+        guilds: guildsCount,
         configured_guilds: configuredGuildCount,
         guilds_with_notification_enabled: guildsWithNotificationEnabledCount,
         users: usersCount,
         timestamp: Date.now(),
     })
+
+    await client.user.setPresence({
+        status: 'online',
+        activities: [{ name: `on ${guildsCount} servers with ${usersCount} users`, type: 0 }],
+    })
+
     setTimeout(runFetchStats, 1000 * 60 * 15)
 }

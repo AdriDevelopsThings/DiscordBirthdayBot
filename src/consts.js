@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export const GITHUB_URL = 'https://github.com/AdriDevelopsThings/DiscordBirthdayBot-rewrite'
+export const GITHUB_URL = 'https://github.com/AdriDevelopsThings/DiscordBirthdayBot'
 export const INVITE_URL = GITHUB_URL + '/wiki/Inviting-and-configuring-BirthdayBot'
 export const COMMAND_OVERVIEW = GITHUB_URL + '/wiki/Command-overview'
 export const ISSUE_URL = GITHUB_URL + '/issues/new'

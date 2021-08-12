@@ -11,7 +11,7 @@ services:
             MYSQL_PASSWORD: 'changeme'
             MYSQL_DATABASE: 'birthdaybot'
     app:
-        image: ghcr.io/adridevelopsthings/discordbirthdaybot-rewrite:main
+        image: ghcr.io/adridevelopsthings/discordbirthdaybot:main
         restart: on-failure
         depends_on:
             - db

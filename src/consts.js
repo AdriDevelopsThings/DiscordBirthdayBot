@@ -17,7 +17,8 @@
  */
 
 export const GITHUB_URL = 'https://github.com/AdriDevelopsThings/DiscordBirthdayBot-rewrite'
-export const INVITE_URL = GITHUB_URL + '/blob/main/INVITE.md'
+export const INVITE_URL = GITHUB_URL + '/wiki/Inviting-and-configuring-BirthdayBot'
+export const COMMAND_OVERVIEW = GITHUB_URL + '/wiki/Command-overview'
 export const ISSUE_URL = GITHUB_URL + '/issues/new'
 export const CONTACT_US_METHOD = 'AdriDoesThings#1260 / PhilippIRL#5148'
 export const EMOJIS = {

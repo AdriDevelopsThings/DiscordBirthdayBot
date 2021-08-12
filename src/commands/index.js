@@ -18,7 +18,7 @@
 
 import { client } from '../bot.js'
 import config from '../config.js'
-import { inviteHandler, githubHandler, gettingStartedHandler } from './info.js'
+import { inviteHandler, githubHandler, commandsHelpHandler, gettingStartedHandler } from './info.js'
 import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler, disableServerNotificationsHandler, fixLeavedUsersCongratulations } from './admin.js'
 import { setBirthdayHandler, birthdayHandler, forgetBirthdayHandler } from './birthday_manager.js'
 import { addNotificationUserHandler, removeNotificationUserHandler } from './add_notification_user.js'
@@ -35,6 +35,11 @@ export const commands = [
         name: 'github',
         description: 'Get the link to the github repository.',
         handler: githubHandler,
+    },
+    {
+        name: 'commands',
+        description: 'Get an overview of available commands.',
+        handler: commandsHelpHandler,
     },
     {
         name: 'getting_started',

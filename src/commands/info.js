@@ -40,6 +40,16 @@ export const githubHandler = async (interaction) => {
     await interaction.reply({ content: translate('github.text'), components: [row] })
 }
 
+export const commandsHelpHandler = async (interaction) => {
+    const translate = await getGuildTranslation(interaction.guildId)
+    const row = new MessageActionRow().addComponents(
+        new MessageButton()
+            .setLabel(translate('commands.button_text'))
+            .setStyle('LINK')
+            .setURL(COMMAND_OVERVIEW))
+    await interaction.reply({ content: translate('commands.text'), components: [row] })
+}
+
 export const gettingStartedHandler = async interaction => {
     const translate = await getGuildTranslation(interaction.guildId)
 

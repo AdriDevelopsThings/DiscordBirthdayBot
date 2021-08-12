@@ -18,7 +18,7 @@
 
 import { getGuildTranslation } from '../lang.js'
 import { MessageActionRow, MessageButton } from 'discord.js'
-import { GITHUB_URL, INVITE_URL } from '../consts.js'
+import { GITHUB_URL, INVITE_URL, COMMAND_OVERVIEW } from '../consts.js'
 
 export const inviteHandler = async (interaction) => {
     const translate = await getGuildTranslation(interaction.guildId)
@@ -59,6 +59,10 @@ export const gettingStartedHandler = async interaction => {
             {
                 name: translate('getting_started.birthday_calendar.title'),
                 value: translate('getting_started.birthday_calendar.text'),
+            },
+            {
+                name: translate('getting_started.more_commands'),
+                value: COMMAND_OVERVIEW,
             },
         ],
     }]

@@ -23,9 +23,11 @@ import { genUTCString } from './date_utils.js'
 import { getTranslation } from './lang.js'
 import { performance } from 'perf_hooks'
 
-export const fetchNewUsersOnGuild = async (guild) => {
+export const fetchNewUsersOnGuild = async (guild, memberIds=null) => {
     console.log(`New guild ${guild.id}`)
-    const memberIds = (await guild.members.fetch()).map(member => member.id)
+    if (memberIds === null) {
+        memberIds = (await guild.members.fetch()).map(member => member.id)
+    }
     const userIds = (await db('users').whereIn('user_id', memberIds).select('user_id'))
         .map(user => user.user_id)
         .filter(async userId => 

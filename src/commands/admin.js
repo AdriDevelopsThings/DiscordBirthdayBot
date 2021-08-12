@@ -127,6 +127,10 @@ export const fixLeavedUsersCongratulations = async (interaction) => {
     }
 
     console.log(`Fix leaved user congratulations on ${guildId}`)
-    await fetchNewUsersOnGuild(interaction.guild)
+    const memberIds = (await interaction.guild.members.fetch()).map(member => member.id)
+    const userIds = (await db('notification_users').where({ guild_id: guildId }).select('user_id')).map(user => user.user_id)
+    const leavedUsers = userIds.filter(userId => !memberIds.includes(userId))
+    await db('notification_users').where({ guild_id: guildId }).whereIn('user_id', leavedUsers).del()
+    await fetchNewUsersOnGuild(guildId, memberIds)
     await interaction.reply(t('fix_leaved_user_congratulations.success'))
 }

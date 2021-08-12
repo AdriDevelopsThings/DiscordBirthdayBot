@@ -19,7 +19,7 @@
 import db from './db.js'
 import { DateTime } from 'luxon'
 import { client } from './bot.js'
-import { genUTCString } from './date_utils.js'
+import { dateTimeToSQLFormat, genUTCString } from './date_utils.js'
 import { getTranslation } from './lang.js'
 import { performance } from 'perf_hooks'
 
@@ -69,7 +69,7 @@ export const birthdayCongratulationAlgorythm = async () => {
     const dayPossibilies = [DateTime.now().minus({ day: 1 }), DateTime.now(), DateTime.now().plus({ day: 1 })].map(m => [m.day, m.month])
     const guilds = await db('guilds')
         .whereNotNull('notification_channel_id')
-        .where('last_birthday_fetch', '<', DateTime.now().startOf('day').toMillis())
+        .where('last_birthday_fetch', '<', dateTimeToSQLFormat(DateTime.now().startOf('day')))
         .orWhere({ last_birthday_fetch: null })
         .select(['guild_id', 'notification_channel_id', 'timezone', 'language'])
     for (const guild of guilds) {

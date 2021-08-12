@@ -1,7 +1,4 @@
-# DiscordBirthdayBot &middot; ![workflow badge](https://shields.io/github/workflow/status/AdriDevelopsThings/DiscordBirthdayBot/Docker) ![issues open badge](https://shields.io/github/issues-raw/AdriDevelopsThings/DiscordBirthdayBot) ![last commit badge](https://shields.io/github/last-commit/AdriDevelopsThings/DiscordBirthdayBot)
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+# DiscordBirthdayBot &middot; ![workflow badge](https://shields.io/github/workflow/status/AdriDevelopsThings/DiscordBirthdayBot/Docker) ![issues open badge](https://shields.io/github/issues-raw/AdriDevelopsThings/DiscordBirthdayBot) ![last commit badge](https://shields.io/github/last-commit/AdriDevelopsThings/DiscordBirthdayBot) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section --> [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg)](#contributors-) <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ### Command overview
 [**Command overview**](https://github.com/AdriDevelopsThings/DiscordBirthdayBot/wiki/Command-overview)

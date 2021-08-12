@@ -1,4 +1,7 @@
 # DiscordBirthdayBot &middot; ![workflow badge](https://shields.io/github/workflow/status/AdriDevelopsThings/DiscordBirthdayBot/Docker) ![issues open badge](https://shields.io/github/issues-raw/AdriDevelopsThings/DiscordBirthdayBot) ![last commit badge](https://shields.io/github/last-commit/AdriDevelopsThings/DiscordBirthdayBot)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ### Command overview
 [**Command overview**](https://github.com/AdriDevelopsThings/DiscordBirthdayBot/wiki/Command-overview)
@@ -49,3 +52,22 @@ yarn run start
 1. Rename the docker-compose.yml.demo to docker-compose.yml.
 2. Change the MYSQL_PASSWORD and change the BOT_TOKEN
 3. Run with ``docker-compose up -d``
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://adridoesthings.com"><img src="https://avatars.githubusercontent.com/u/45321107?v=4?s=100" width="100px;" alt=""/><br /><sub><b>AdriDevelopsThings</b></sub></a><br /><a href="https://github.com/AdriDevelopsThings/DiscordBirthdayBot/commits?author=AdriDevelopsThings" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

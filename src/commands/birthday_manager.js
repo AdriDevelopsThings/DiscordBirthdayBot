@@ -67,7 +67,7 @@ export const setBirthdayHandler = async (interaction) => {
 
 export const birthdayHandler = async (interaction) => {
     const translate = await getGuildTranslation(interaction.guildId)
-    const targetUserId = interaction.options.getUser('user').id || interaction.user.id
+    const targetUserId = (interaction.options.getUser('user') || interaction.user).id
     const birthday = await db('users').where({ user_id: targetUserId }).select(['birthday_day', 'birthday_month']).first()
     if (birthday) {
         const birthdayTranslationData = {day: String(birthday.birthday_day).padStart(2, '0'), month: String(birthday.birthday_month).padStart(2, '0')}

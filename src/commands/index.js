@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { client } from '../bot.js'
-import config from '../config.js'
+
 import { inviteHandler, githubHandler, commandsHelpHandler, gettingStartedHandler } from './info.js'
 import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler, disableServerNotificationsHandler, fixLeavedUsersCongratulations, handleSelectTimezone, handleSelectLanguage } from './admin.js'
 import { setBirthdayHandler, birthdayHandler, forgetBirthdayHandler } from './birthday_manager.js'
 import { addNotificationUserHandler, removeNotificationUserHandler } from './add_notification_user.js'
 import { nextBirthdayHandler, currentBirthdayHandler } from './relative_birthday.js'
 import { birthdayCalendarHandler } from './birthday_calendar.js'
+import { registerCommandsIfNew } from './command_register.js'
 
 export const commands = [
     /* Info commands */
@@ -206,14 +206,8 @@ const buildCommandObjectList = (commandList=commands) => {
 }
 
 export const registerCommands = async () => {
-    const guildId = config.environment === 'development' && config.development_guild_id
     const commandList = buildCommandObjectList()
-    if (guildId) {
-        client.application.commands.set(commandList, guildId)
-    } else {
-        client.application.commands.set(commandList)
-    }
-    
+    await registerCommandsIfNew(commandList)    
 }
 
 const forEachCommand = (filterBuilder, forEachCommands=commands, root='') => {

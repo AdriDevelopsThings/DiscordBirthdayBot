@@ -17,7 +17,7 @@
  */
 
 import { Client, Intents } from 'discord.js'
-import { registerCommands, handleCommand } from './commands/index.js'
+import { registerCommands, handleCommand, handleSelectMenu } from './commands/index.js'
 import { birthdayCongratulationAlgorythm, fetchNewUsersOnGuild, onGuildMemberJoin, onGuildMemberLeave } from './birthday_congratulation.js'
 import { MessageEmbed } from 'discord.js'
 import { CONTACT_US_METHOD, ISSUE_URL } from './consts.js'
@@ -81,6 +81,14 @@ client.on('interactionCreate', async interaction => {
                 console.error(e.stack)
                 console.error('----- !!! -----')
             }
+        }
+    } else if(interaction.isSelectMenu()) {
+        try {
+            if(interaction.customId) {
+                await handleSelectMenu(interaction)
+            }
+        } catch(e) {
+            console.error('Failed to handle select menu interaction', e)
         }
     }
 })

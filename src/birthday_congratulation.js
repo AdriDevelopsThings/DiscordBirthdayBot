@@ -22,17 +22,21 @@ import { client } from './bot.js'
 import { dateTimeToSQLFormat, genUTCString } from './date_utils.js'
 import { getTranslation } from './lang.js'
 import { performance } from 'perf_hooks'
+import { filterAsync } from './utils.js'
 
 export const fetchNewUsersOnGuild = async (guild, memberIds=null) => {
     console.log(`New guild ${guild.id}`)
     if (memberIds === null) {
         memberIds = (await guild.members.fetch()).map(member => member.id)
     }
-    const userIds = (await db('users').whereIn('user_id', memberIds).select('user_id'))
-        .map(user => user.user_id)
-        .filter(async userId => 
+    const unfilteredUserIds = (await db('users').whereIn('user_id', memberIds).select('user_id')).map(user => user.user_id)
+    const userIds = await filterAsync(unfilteredUserIds,
+        async userId => 
             !(await db('notification_users').where({ user_id: userId, guild_id: guild.id }).select().first()))
-    await db('notification_users').insert(userIds.map(userId => ({ user_id: userId, guild_id: guild.id })))
+    if (userIds.length > 0) {
+        await db('notification_users').insert(userIds.map(userId => ({ user_id: userId, guild_id: guild.id })))
+    }
+
 } 
 
 export const onGuildMemberJoin = async (member) => {

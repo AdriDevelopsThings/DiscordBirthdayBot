@@ -21,6 +21,7 @@ import { getTranslation, getGuildTranslation, LANGUAGES } from '../lang.js'
 import { currentDateTimeToSQLFormat, genUTCString } from '../date_utils.js'
 import db from '../db.js'
 import { fetchNewUsersOnGuild } from '../birthday_congratulation.js'
+import { MessageActionRow, MessageSelectMenu } from 'discord.js'
 
 const modifyServer = async (guildId, values, guildExists=null) => {
     if (guildExists === null) {
@@ -40,27 +41,27 @@ export const setNotificationChannelHandler = async (interaction) => {
     const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
-        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
+        await interaction.reply({content: t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }), ephemeral: true})
         return
     }
 
     const channel = interaction.options.getChannel('channel')
 
     if(!channel.isText()) {
-        await interaction.reply(t('set_notification_channel.error_channel_type'))
+        await interaction.reply({content: t('set_notification_channel.error_channel_type'), ephemeral: true})
         return
     }
 
     await modifyServer(interaction.guildId, { notification_channel_id: channel.id }, guildExists)
 
-    await interaction.reply(t('set_notification_channel.success', {channel: `<#${channel.id}>`}))
+    await interaction.reply({content: t('set_notification_channel.success', {channel: `<#${channel.id}>`}), ephemeral: true})
 }
 
 export const disableServerNotificationsHandler = async (interaction) => {
     const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
-        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
+        await interaction.reply({content: t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }), ephemeral: true})
         return
     }
 
@@ -68,52 +69,82 @@ export const disableServerNotificationsHandler = async (interaction) => {
         await db('guilds').where({ guild_id: interaction.guildId }).update({ notification_channel_id: null })
     }
 
-    await interaction.reply(t('disable_notification_channel.success'))
+    await interaction.reply({content: t('disable_notification_channel.success'), ephemeral: true})
 }
 
 export const modifyTimezoneHandler = async (interaction) => {
-    const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
+    const t = await getGuildTranslation(interaction.guildId)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
-        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
+        await interaction.reply({content: t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }), ephemeral: true})
         return
     }
 
-    let timezoneString = interaction.options.getString('timezone').toLowerCase().replace('gmt', 'utc')
-    if (timezoneString == 'utc' || timezoneString == 'utc0') {
-        timezoneString = 'utc+0'
-    } else if(!timezoneString.startsWith('utc')) {
-        timezoneString = 'utc' + timezoneString
-    }
+    const timezones = Array.from({length: 25}, (_, i) => i - 12).map(offset => ({value: offset.toString(), label: genUTCString(offset)})) // generate timezones from UTC-12 to UTC+12
 
-    if (timezoneString.length != 5) {
-        await interaction.reply(t('timezone_set.wrong_syntax'))
+    const row = new MessageActionRow()
+        .addComponents(
+            new MessageSelectMenu()
+                .setCustomId('select_timezone')
+                .setPlaceholder(t('timezone_set.placeholder'))
+                .setMaxValues(1)
+                .setMinValues(1)
+                .addOptions(timezones),
+        )
+    await interaction.reply({content: t('timezone_set.description'), components: [row], ephemeral: true})
+}
+
+export const handleSelectTimezone = async (interaction) => {
+    if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
+        await interaction.reply({content: t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }), ephemeral: true})
         return
     }
 
-    const timezone = parseInt(timezoneString.substr(3))
+    const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
+    const timezone = parseInt(interaction.values[0])
     if (timezone < -12 || timezone > 12) {
-        await interaction.reply(t('timezone_set.wrong_timezone'))
+        await interaction.reply({content: t('timezone_set.wrong_timezone'), ephemeral: true})
         return
     }
     await modifyServer(interaction.guildId, { timezone }, guildExists)
-    await interaction.reply(t('timezone_set.success', { timezone: genUTCString(timezone) }))
+    await interaction.reply({content: t('timezone_set.success', { timezone: genUTCString(timezone) }), ephemeral: true})
 }
 
 export const modifyLanguageHandler = async (interaction) => {
     const t = await getGuildTranslation(interaction.guildId)
 
     if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
-        await interaction.reply(t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }))
+        await interaction.reply({content: t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }), ephemeral: true})
         return
     }
 
-    const language = interaction.options.getString('language').toLowerCase()
+    const row = new MessageActionRow()
+        .addComponents(
+            new MessageSelectMenu()
+                .setCustomId('select_language')
+                .setPlaceholder(t('language_set.placeholder'))
+                .setMaxValues(1)
+                .setMinValues(1)
+                .addOptions(Object.keys(LANGUAGES).map(lang => ({
+                    value: lang,
+                    label: getTranslation(lang)('language.name'),
+                }))),
+        )
+    await interaction.reply({content: t('language_set.description'), components: [row], ephemeral: true})
+}
+
+export const handleSelectLanguage = async (interaction) => {
+    const [t, guildExists] = await getGuildTranslation(interaction.guildId, true)
+    const language = interaction.values[0]
+    if(!interaction.member.permissions.has('MANAGE_CHANNELS')) {
+        await interaction.reply({content: t('general.insufficient_permissions', { permissions: 'MANAGE_CHANNELS' }), ephemeral: true})
+        return
+    }
     if (!Object.keys(LANGUAGES).includes(language)) {
-        await interaction.reply((await getGuildTranslation(interaction.guildId))('language_set.doesnt_exist', { language , available_languages: Object.keys(LANGUAGES).join(', ') }))
+        await interaction.reply({content: t('language_set.doesnt_exist', { language , available_languages: Object.keys(LANGUAGES).join(', ') }), ephemeral: true})
     } else {
-        await modifyServer(interaction.guildId, { language })
-        await interaction.reply((getTranslation(language))('language_set.success', { language }))
+        await modifyServer(interaction.guildId, { language }, guildExists)
+        await interaction.reply({content: getTranslation(language)('language_set.success', { language }), ephemeral: true})
     }
 }
 
@@ -131,6 +162,6 @@ export const fixLeavedUsersCongratulations = async (interaction) => {
     const userIds = (await db('notification_users').where({ guild_id: guildId }).select('user_id')).map(user => user.user_id)
     const leavedUsers = userIds.filter(userId => !memberIds.includes(userId))
     await db('notification_users').where({ guild_id: guildId }).whereIn('user_id', leavedUsers).del()
-    await fetchNewUsersOnGuild(guildId, memberIds)
+    await fetchNewUsersOnGuild(interaction.guild, memberIds)
     await interaction.reply(t('fix_leaved_user_congratulations.success'))
 }

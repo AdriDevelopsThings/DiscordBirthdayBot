@@ -17,6 +17,7 @@
         "object-shorthand": ["warn", "always"],
         "semi": ["error", "never"],
         "no-constant-condition": ["error", {"checkLoops": false}],
-        "no-var": ["error"]
+        "no-var": ["error"],
+        "no-empty": ["warn"]
     }
 }

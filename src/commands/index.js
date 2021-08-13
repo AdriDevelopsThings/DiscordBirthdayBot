@@ -19,13 +19,14 @@
 import { client } from '../bot.js'
 import config from '../config.js'
 import { inviteHandler, githubHandler, commandsHelpHandler, gettingStartedHandler } from './info.js'
-import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler, disableServerNotificationsHandler, fixLeavedUsersCongratulations } from './admin.js'
+import { setNotificationChannelHandler, modifyTimezoneHandler, modifyLanguageHandler, disableServerNotificationsHandler, fixLeavedUsersCongratulations, handleSelectTimezone, handleSelectLanguage } from './admin.js'
 import { setBirthdayHandler, birthdayHandler, forgetBirthdayHandler } from './birthday_manager.js'
 import { addNotificationUserHandler, removeNotificationUserHandler } from './add_notification_user.js'
 import { nextBirthdayHandler, currentBirthdayHandler } from './relative_birthday.js'
 import { birthdayCalendarHandler } from './birthday_calendar.js'
 
 export const commands = [
+    /* Info commands */
     {
         name: 'invite',
         description: 'Get an invite link.',
@@ -46,112 +47,167 @@ export const commands = [
         description: 'Get information about important commands',
         handler: gettingStartedHandler,
     },
+    /* Admin commands */
     {
-        name: 'set_notification_channel',
-        description: 'Set the notification channel on a guild. (admin)',
-        handler: setNotificationChannelHandler,
-        options: [{
-            name: 'channel',
-            description: 'The notification channel.',
-            type: 7,
-            required: true,
-        }],
+        name: 'settings',
+        description: 'Server settings for admins',
+        options: [
+            {
+                name: 'help',
+                description: 'Admin help command',
+                type: 1,
+                handler: inviteHandler,
+            },
+            {
+                name: 'notification_channel',
+                description: 'Manage the notification channel',
+                type: 2,
+                options: [
+                    {
+                        name: 'set',
+                        description: 'Set the notification channel to a new one',
+                        type: 1,
+                        handler: setNotificationChannelHandler,
+                        options: [{
+                            name: 'channel',
+                            description: 'The notification channel.',
+                            type: 7,
+                            required: true,
+                        }],
+                    },
+                    {
+                        name: 'remove',
+                        description: 'Remove the notification channel and disable all notifications on this guild',
+                        type: 1,
+                        handler: disableServerNotificationsHandler,
+                    },
+                ],
+            },
+            {
+                name: 'language',
+                description: 'Set your server language',
+                type: 1,
+                handler: modifyLanguageHandler,
+                select_menu_handlers: {
+                    select_language: handleSelectLanguage,
+                },
+            },
+            {
+                name: 'timezone',
+                description: 'Change the server timezone. (UTC per default)',
+                type: 1,
+                handler: modifyTimezoneHandler,
+                select_menu_handlers: {
+                    select_timezone: handleSelectTimezone,
+                },
+
+            },
+            {
+                name: 'fix_leaved_user_congratulations',
+                description: 'If a leaved user get congratulated you have to run this command to fix the issue',
+                type: 1,
+                handler: fixLeavedUsersCongratulations,
+            },
+        ],
     },
-    {
-        name: 'remove_notification_channel',
-        description: 'Remove the notification channel and disable all notifications on this guild.',
-        handler: disableServerNotificationsHandler,
-    },
-    {
-        name: 'set_birthday',
-        description: 'Set birthday.',
-        handler: setBirthdayHandler,
-        options: [{
-            name: 'birthday',
-            description: 'Syntax: dd-mm (day-month)',
-            type: 3,
-            required: true,
-        }],
-    },
+    /* User commands */
+    /* Birthday command */
     {
         name: 'birthday',
-        description: 'Get your birthday or the birthday of a user.',
-        handler: birthdayHandler,
-        options: [{
-            name: 'user',
-            description: 'Get birthday info about user (per default you).',
-            type: 6,
-            required: false,
-        }],
+        description: 'Manage or see birthdays',
+        options: [
+            {
+                name: 'query',
+                description: 'Get your birthday or the birthday of a user',
+                type: 1,
+                handler: birthdayHandler,
+                options: [{
+                    name: 'user',
+                    description: 'Get birthday info about user (per default you).',
+                    type: 6,
+                    required: false,
+                }],
+            },
+            {
+                name: 'set',
+                description: 'Set your birthday',
+                type: 1,
+                handler: setBirthdayHandler,
+                options: [{
+                    name: 'birthday',
+                    description: 'Syntax: dd-mm (day-month)',
+                    type: 3,
+                    required: true,
+                }],
+            },
+            {
+                name: 'calendar',
+                description: 'Show birthday calendar',
+                type: 1,
+                handler: birthdayCalendarHandler,
+                options: [{
+                    name: 'month',
+                    description: 'Month',
+                    type: 3,
+                    required: false,
+                }],
+            },
+            {
+                name: 'next',
+                description: 'Show the next date when user has birthday',
+                type: 1,
+                handler: nextBirthdayHandler,
+            },
+            {
+                name: 'today',
+                description: 'Show users which have birthday today',
+                type: 1,
+                handler: currentBirthdayHandler,
+            },
+            {
+                name: 'forget',
+                description: 'I will forget your birthday',
+                type: 1,
+                handler: forgetBirthdayHandler,
+            },
+        ],
     },
+    /* Notification manager */
     {
-        name: 'forget_birthday',
-        description: 'I will forget your birthday.',
-        handler: forgetBirthdayHandler,
-    },
-    {
-        name: 'set_timezone',
-        description: 'Change the server timezone. (UTC per default)',
-        handler: modifyTimezoneHandler,
-        options: [{
-            name: 'timezone',
-            description: 'UTC+-0 or GMT+-0',
-            type: 3,
-            required: true,
-        }],
-    },
-    {
-        name: 'set_language',
-        description: 'Change the server language.',
-        handler: modifyLanguageHandler,
-        options: [{
-            name: 'language',
-            description: 'Language code (en/de...)',
-            type: 3,
-            required: true,
-        }],
-    },
-    {
-        name: 'enable_notifications',
-        description: 'Enable notifications on this server.',
-        handler: addNotificationUserHandler,
-    },
-    {
-        name: 'disable_notifications',
-        description: 'Disable notifications on this server.',
-        handler: removeNotificationUserHandler,
-    },
-    {
-        name: 'fix_leaved_user_congratulations',
-        description: 'If a leaved user get congratulated you have to run this command to fix the issue.',
-        handler: fixLeavedUsersCongratulations,
-    },
-    {
-        name: 'next_birthday',
-        description: 'Show the next date when user has birthday.',
-        handler: nextBirthdayHandler,
-    },
-    {
-        name: 'today_birthday',
-        description: 'Show users which have birthday today.',
-        handler: currentBirthdayHandler,
-    },
-    {
-        name: 'birthday_calendar',
-        description: 'Show birthday calendar',
-        handler: birthdayCalendarHandler,
-        options: [{
-            name: 'month',
-            description: 'Month',
-            type: 3,
-            required: false,
-        }],
+        name: 'notifications',
+        description: 'Disable and re-enable notifications on this server',
+        options: [
+            {
+                name: 'disable',
+                description: 'Disable notifications on this server',
+                type: 1,
+                handler: removeNotificationUserHandler,
+            },
+            {
+                name: 'enable',
+                description: 'Re-Enable notifications on this server',
+                type: 1,
+                handler: addNotificationUserHandler,
+            },
+        ],
     },
 ]
 
+const buildCommandObjectList = (commandList=commands) => {
+    commandList = commandList.map(({name, description, options}) => ({name, description, options}))
+    return commandList.map(command => {        
+        if (command.options && command.options.filter(option => option.type == 1 || option.type == 2).length == 0) {
+            command.options = buildCommandObjectList(command.options)
+            return command
+        } else {
+            return command
+        }
+    })
+}
+
 export const registerCommands = async () => {
     const guildId = config.environment === 'development' && config.development_guild_id
-    const commandList = commands.map(({name, description, options}) => ({name, description, options}))
+    const commandList = buildCommandObjectList()
     if (guildId) {
         client.application.commands.set(commandList, guildId)
     } else {
@@ -160,14 +216,43 @@ export const registerCommands = async () => {
     
 }
 
-
-export const handleCommand = async (interaction) => {
-    for (const command of commands) {
-        if (command.name == interaction.commandName) {
-            return await command.handler(interaction)
+const forEachCommand = (filterBuilder, forEachCommands=commands, root='') => {
+    for (const command of forEachCommands) {
+        const currentRoot = root + (root ? '.' : '') + command.name
+        if (filterBuilder({ command, root: currentRoot }) && (!command.type || command.type == 1)) {
+            return command
+        } else if (command.options && command.options.filter(option => option.type == 1 || option.type == 2).length > 0) {
+            const returnCommand = forEachCommand(filterBuilder, command.options, currentRoot)
+            if (returnCommand) {
+                return returnCommand
+            }
         }
     }
+    if (root === '') {
+        throw new Error(`Command '${filterBuilder}' not found.`)   
+    } else {
+        return null
+    }
+}
 
-    throw new Error(`Command '${interaction.commandName}' not found.`)
-    
+const getRootOfInteraction = (commandName, interactionOptions) => {
+    let root = ''
+    const group = interactionOptions.getSubcommandGroup(false)
+    if (group) {
+        root += group + '.'
+    }
+    const subCommand = interactionOptions.getSubcommand(false)
+    if (subCommand) {
+        root += subCommand
+    }
+    return commandName + (root ? '.' + root : '')
+}
+
+export const handleCommand = async (interaction) => {
+    const interactionRoot = getRootOfInteraction(interaction.commandName, interaction.options)
+    await forEachCommand(({ command, root }) => command.handler && root == interactionRoot).handler(interaction)
+}
+
+export const handleSelectMenu = async (interaction)=> {
+    await forEachCommand(({ command }) => command.select_menu_handlers && command.select_menu_handlers[interaction.customId]).select_menu_handlers[interaction.customId](interaction)
 }

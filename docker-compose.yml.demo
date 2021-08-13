@@ -23,6 +23,10 @@ services:
             MYSQL_USER: 'birthdaybot'
             MYSQL_PASSWORD: 'changeme'
             MYSQL_DATABASE: 'birthdaybot'
+        volumes:
+            - type: bind
+              source: ./birthdaybot_command_hashs.save
+              target: /app/command_hashs.save
 
 volumes:
     db:

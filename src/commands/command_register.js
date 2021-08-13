@@ -11,7 +11,10 @@ const command_hashs_path = path.join(__dirname, path.sep, 'command_hashs.save')
 
 const pushCommandList = async (commandList, guildId, callback) => {
     const commandListHash = createHash('md5').update(JSON.stringify(commandList)).digest('hex')
-    const guildIdHash = createHash('md5').update(guildId).digest('hex')
+    let guildIdHash = ''
+    if (guildId) {
+        guildIdHash = createHash('md5').update(guildId).digest('hex')
+    }
     const fsHash = commandListHash + ':' + guildIdHash
     if (!existsSync(command_hashs_path) || await readFile(command_hashs_path) != fsHash) {
         await callback()

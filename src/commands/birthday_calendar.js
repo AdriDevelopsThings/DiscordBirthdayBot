@@ -16,9 +16,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { MessageEmbed } from 'discord.js'
+import discordjs from 'discord.js'
 import { DateTime } from 'luxon'
-import { client } from '../bot.js'
 import { EMOJIS } from '../consts.js'
 import db from '../db.js'
 import { getGuildTranslation } from '../lang.js'
@@ -70,8 +69,8 @@ const generateEmbed = async (translate, guildId, month) => {
         .whereNotNull('birthday_day')
         .where({ birthday_month: month })
         .select(['user_id', 'birthday_day', 'birthday_month'])
-    const embed1 = new MessageEmbed().setTitle(translate('birthday_calendar.embed_name', { month: String(month).padStart(2, '0') }))
-    const embed2 = new MessageEmbed().setTitle(translate('birthday_calendar.embed_name', { month: String(month).padStart(2, '0') }))
+    const embed1 = new discordjs.MessageEmbed().setTitle(translate('birthday_calendar.embed_name', { month: String(month).padStart(2, '0') }))
+    const embed2 = new discordjs.MessageEmbed().setTitle(translate('birthday_calendar.embed_name', { month: String(month).padStart(2, '0') }))
 
     for (let i=1; i <= 31; i++) {
         const usersAtThisDay = users.filter(user => i == user.birthday_day).map(user => `<@${user.user_id}>`).join(', ') || '-'

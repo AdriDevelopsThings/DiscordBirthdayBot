@@ -17,35 +17,35 @@
  */
 
 import { getGuildTranslation } from '../lang.js'
-import { MessageActionRow, MessageButton } from 'discord.js'
+import discordjs from 'discord.js'
 import { GITHUB_URL, INVITE_URL, COMMAND_OVERVIEW } from '../consts.js'
 
 export const inviteHandler = async (interaction) => {
     const translate = await getGuildTranslation(interaction.guildId)
-    const row = new MessageActionRow().addComponents(
-        new MessageButton()
+    const row = new discordjs.ActionRowBuilder().addComponents(
+        new discordjs.ButtonBuilder()
             .setLabel(translate('invite.button_text'))
-            .setStyle('LINK')
+            .setStyle(discordjs.ButtonStyle.Link)
             .setURL(INVITE_URL))
     await interaction.reply({ content: translate('invite.text'), components: [row] })
 }
 
 export const githubHandler = async (interaction) => {
     const translate = await getGuildTranslation(interaction.guildId)
-    const row = new MessageActionRow().addComponents(
-        new MessageButton()
+    const row = new discordjs.ActionRowBuilder().addComponents(
+        new discordjs.ButtonBuilder()
             .setLabel(translate('github.button_text'))
-            .setStyle('LINK')
+            .setStyle(discordjs.ButtonStyle.Link)
             .setURL(GITHUB_URL))
     await interaction.reply({ content: translate('github.text'), components: [row] })
 }
 
 export const commandsHelpHandler = async (interaction) => {
     const translate = await getGuildTranslation(interaction.guildId)
-    const row = new MessageActionRow().addComponents(
-        new MessageButton()
+    const row = new discordjs.ActionRowBuilder().addComponents(
+        new discordjs.ButtonBuilder()
             .setLabel(translate('commands.button_text'))
-            .setStyle('LINK')
+            .setStyle(discordjs.ButtonStyle.Link)
             .setURL(COMMAND_OVERVIEW))
     await interaction.reply({ content: translate('commands.text'), components: [row] })
 }

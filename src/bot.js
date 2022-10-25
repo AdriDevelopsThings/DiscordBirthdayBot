@@ -16,10 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Client, Intents } from 'discord.js'
+import discordjs from 'discord.js'
 import { registerCommands, handleCommand, handleSelectMenu } from './commands/index.js'
 import { birthdayCongratulationAlgorythm, fetchNewUsersOnGuild, onGuildMemberJoin, onGuildMemberLeave } from './birthday_congratulation.js'
-import { MessageEmbed } from 'discord.js'
 import { CONTACT_US_METHOD, ISSUE_URL } from './consts.js'
 import { getGuildTranslation, getTranslation } from './lang.js'
 import { generateRandomErrorCode } from './error_handler_utils.js'
@@ -28,7 +27,11 @@ import { runFetchStats } from './stats.js'
 import AutoPoster from 'topgg-autoposter'
 import config from './config.js'
 
-export const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] })
+export const client = new discordjs.Client({ intents: [
+    discordjs.GatewayIntentBits.Guilds,
+    discordjs.GatewayIntentBits.GuildMembers,
+    discordjs.GatewayIntentBits.GuildMessageReactions,
+] })
 
 if (config.top_gg_token) {
     AutoPoster(config.top_gg_token, client) 
@@ -61,7 +64,7 @@ client.on('interactionCreate', async interaction => {
                 console.error(e.stack)
             }
             
-            const embed = new MessageEmbed()
+            const embed = new discordjs.MessageEmbed()
                 .setAuthor('Error Reporter', null, ISSUE_URL)
                 .setTitle(translate('error_handler.error_occured'))
                 .setDescription('🔴🔴🔴🔴🔴')

@@ -21,7 +21,7 @@ import { getTranslation, getGuildTranslation, LANGUAGES } from '../lang.js'
 import { currentDateTimeToSQLFormat, genUTCString } from '../date_utils.js'
 import db from '../db.js'
 import { fetchNewUsersOnGuild } from '../birthday_congratulation.js'
-import { MessageActionRow, MessageSelectMenu } from 'discord.js'
+import discordjs from 'discord.js'
 
 const modifyServer = async (guildId, values, guildExists=null) => {
     if (guildExists === null) {
@@ -82,9 +82,9 @@ export const modifyTimezoneHandler = async (interaction) => {
 
     const timezones = Array.from({length: 25}, (_, i) => i - 12).map(offset => ({value: offset.toString(), label: genUTCString(offset)})) // generate timezones from UTC-12 to UTC+12
 
-    const row = new MessageActionRow()
+    const row = new discordjs.ActionRowBuilder()
         .addComponents(
-            new MessageSelectMenu()
+            new discordjs.SelectMenuBuilder()
                 .setCustomId('select_timezone')
                 .setPlaceholder(t('timezone_set.placeholder'))
                 .setMaxValues(1)
@@ -118,9 +118,9 @@ export const modifyLanguageHandler = async (interaction) => {
         return
     }
 
-    const row = new MessageActionRow()
+    const row = new discordjs.ActionRowBuilder()
         .addComponents(
-            new MessageSelectMenu()
+            new discordjs.SelectMenuBuilder()
                 .setCustomId('select_language')
                 .setPlaceholder(t('language_set.placeholder'))
                 .setMaxValues(1)

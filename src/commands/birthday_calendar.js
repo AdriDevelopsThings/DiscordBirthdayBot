@@ -75,9 +75,9 @@ const generateEmbed = async (translate, guildId, month) => {
     for (let i=1; i <= 31; i++) {
         const usersAtThisDay = users.filter(user => i == user.birthday_day).map(user => `<@${user.user_id}>`).join(', ') || '-'
         if (i < 16) {
-            embed1.addField(String(i), usersAtThisDay, true)
+            embed1.addFields(String(i), usersAtThisDay, true)
         } else {
-            embed2.addField(String(i), usersAtThisDay, true)
+            embed2.addFields(String(i), usersAtThisDay, true)
         }
     }
     return [embed1, embed2]

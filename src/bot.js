@@ -69,12 +69,12 @@ client.on('interactionCreate', async interaction => {
                 .setTitle(translate('error_handler.error_occured'))
                 .setDescription('🔴🔴🔴🔴🔴')
                 .setColor(13572399)
-            embed.addField(translate('error_handler.what_happend'), translate('error_handler.error_occured_happend_description'))
-            embed.addField(translate('error_handler.what_should_i_do'), translate('error_handler.what_should_i_do_description', {
+            embed.addFields(translate('error_handler.what_happend'), translate('error_handler.error_occured_happend_description'))
+            embed.addFields(translate('error_handler.what_should_i_do'), translate('error_handler.what_should_i_do_description', {
                 issue: ISSUE_URL,
                 contact: CONTACT_US_METHOD,
             }))
-            embed.addField(translate('error_handler.error_code'), errorCode)
+            embed.addFields(translate('error_handler.error_code'), errorCode)
             try {
                 await interaction.reply({ embeds: [embed] })
                 console.log('Error message sent.')

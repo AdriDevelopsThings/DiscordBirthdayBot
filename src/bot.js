@@ -64,7 +64,7 @@ client.on('interactionCreate', async interaction => {
                 console.error(e.stack)
             }
             
-            const embed = new discordjs.MessageEmbed()
+            const embed = new discordjs.EmbedBuilder()
                 .setAuthor('Error Reporter', null, ISSUE_URL)
                 .setTitle(translate('error_handler.error_occured'))
                 .setDescription('🔴🔴🔴🔴🔴')

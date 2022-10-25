@@ -47,7 +47,7 @@ export const setNotificationChannelHandler = async (interaction) => {
 
     const channel = interaction.options.getChannel('channel')
 
-    if(!channel.isText()) {
+    if(channel.type != discordjs.ChannelType.GuildText) {
         await interaction.reply({content: t('set_notification_channel.error_channel_type'), ephemeral: true})
         return
     }
